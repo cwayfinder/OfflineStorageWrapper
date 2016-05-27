@@ -80,13 +80,3 @@ Storage = (function () {
     getAll: getAll
   }
 })();
-
-Storage.save('myKey1', { prop: 'someObjProp' }, Storage.LOCAL_STORAGE);
-Storage.save('myKey2', 'value', Storage.INDEXED_DB);
-Storage.save('myKey3', new Blob(['some text here'], { type: 'text/plain' }), Storage.INDEXED_DB);
-
-console.log(Storage.get('myKey1')); // returns { prop: 'someObjProp' } from localStorage
-console.log(Storage.get('myKey2', Storage.INDEXED_DB)); // returns undefined
-console.log(Storage.get('myKey4', Storage.INDEXED_DB)); // returns undefined
-
-console.log(Storage.getAll(''));
