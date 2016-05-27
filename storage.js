@@ -27,12 +27,51 @@ Storage = (function () {
   }
 
   function createIDBProvider() {
-    function save(key, value) {
+    var db;
+    var openRequest = indexedDB.open("myDb",1);
 
+    openRequest.onupgradeneeded = function(e) {
+      console.log("Upgrading DB");
+      db = e.target.result;
+
+      if(!db.objectStoreNames.contains("myObjectStore")) {
+        db.createObjectStore("myObjectStore");
+      }
+    };
+
+    openRequest.onsuccess = function(e) {
+      console.log("Successfully connected to DB");
+      db = e.target.result;
+    };
+
+    openRequest.onerror = function(e) {
+      console.log("Error on connection to DB", e);
+    };
+
+    function save(key, value) {
+      var transaction = db.transaction(["myObjectStore"],"readwrite");
+      var store = transaction.objectStore("myObjectStore");
+
+      var request = store.add(value,key);
+
+      request.onerror = function(e) {
+        console.log("Error",e.target.error.name);
+      };
+      request.onsuccess = function(e) {
+        console.log("Woot! Saved it");
+      };
     }
 
     function get(key) {
+      var transaction = db.transaction(["myObjectStore"],"readonly");
+      var store = transaction.objectStore("myObjectStore");
 
+      var request = store.get(key);
+
+      request.onsuccess = function(e) {
+        var result = e.target.result;
+        console.dir(result);
+      }
     }
 
     function getAll() {
